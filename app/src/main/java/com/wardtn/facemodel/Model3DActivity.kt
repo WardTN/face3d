@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.os.Environment
 import android.widget.Button
 import androidx.core.app.ActivityCompat
-import com.wardtn.facemodel.Constant.PATH_Folder_3D
-import com.wardtn.facemodel.Constant.SOLEX
-import com.wardtn.facemodel.Native3DLayout
-import com.wardtn.facemodel.util.CommonUtils
+import com.wardtn.modellibrary.Constant.PATH_Folder_3D
+import com.wardtn.modellibrary.Constant.SOLEX
+import com.wardtn.modellibrary.Native3DLayout
+import com.wardtn.modellibrary.util.CommonUtils
 
 class Model3DActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class Model3DActivity : AppCompatActivity() {
             CommonUtils.copyAssetsDirToSDCard(this@Model3DActivity, "3DMark", fileDir)
 
 
-            findViewById<Native3DLayout>(R.id.native3dLayout).set3DActivity(this)
+            findViewById<com.wardtn.modellibrary.Native3DLayout>(R.id.native3dLayout).set3DActivity(this)
             PATH_Folder_3D =
                 getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.absolutePath + "/3DMark"
             var obj = "$PATH_Folder_3D/$SOLEX.obj"
