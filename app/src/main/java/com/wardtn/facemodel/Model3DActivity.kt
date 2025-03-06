@@ -11,11 +11,11 @@ import com.wardtn.modellibrary.Constant.PATH_Folder_3D
 import com.wardtn.modellibrary.Constant.SOLEX
 import com.wardtn.modellibrary.Native3DLayout
 import com.wardtn.modellibrary.util.CommonUtils
+import com.wardtn.modellibrary.util.android.ContentUtils
 
 class Model3DActivity : AppCompatActivity() {
 
-    private val REQUEST_PERMISSIONS =
-        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private val PERMISSION_REQUEST_CODE = 1
 
@@ -32,12 +32,12 @@ class Model3DActivity : AppCompatActivity() {
             CommonUtils.copyAssetsDirToSDCard(this@Model3DActivity, "3DMark", fileDir)
 
 
-            findViewById<com.wardtn.modellibrary.Native3DLayout>(R.id.native3dLayout).set3DActivity(this)
+            findViewById<Native3DLayout>(R.id.native3dLayout).set3DActivity(this)
             PATH_Folder_3D =
                 getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.absolutePath + "/3DMark"
             var obj = "$PATH_Folder_3D/$SOLEX.obj"
 
-            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj)
+            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, "output_mask.png")
 
         }
 
@@ -48,15 +48,15 @@ class Model3DActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn_change_texure).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()
-                ?.setChangeMarkTexture(true)
+                ?.setChangeMarkTexture(ContentUtils.getOverlayPath2())
         }
-        
     }
 
     protected fun hasPermissionsGranted(permissions: Array<String>): Boolean {
         for (permission in permissions) {
-            if (ActivityCompat.checkSelfPermission(this,
-                    permission!!) != PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    this, permission!!
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 return false
             }

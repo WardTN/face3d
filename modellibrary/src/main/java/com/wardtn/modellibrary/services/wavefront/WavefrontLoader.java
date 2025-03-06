@@ -29,11 +29,14 @@
 
 package com.wardtn.modellibrary.services.wavefront;
 
+import static com.wardtn.modellibrary.util.ModelFileUtilKt.isFileExists;
+
 import android.net.Uri;
 import android.opengl.GLES20;
 
 import androidx.annotation.Nullable;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -62,6 +65,9 @@ public class WavefrontLoader {
 
     private final int triangulationMode;
     private final LoadListener callback;
+
+    private String folder = "";
+    private String overLayoutname = "";
 
     public WavefrontLoader(int triangulationMode, LoadListener callback) {
         this.triangulationMode = triangulationMode;
@@ -101,9 +107,14 @@ public class WavefrontLoader {
      * @param objPath 路径
      * @return
      */
-    public synchronized List<Object3DData> load(String objPath) {
+    public synchronized List<Object3DData> load(String objPath,String overLayoutname) {
         try {
 //            InputStream is = r.getAssets().open(fname);
+
+            // get Folder
+            folder = objPath.substring(0, objPath.lastIndexOf("/"));
+            this.overLayoutname = overLayoutname;
+
             //更换成路径传输
             InputStream is = new FileInputStream(objPath);
             // log event
@@ -123,15 +134,10 @@ public class WavefrontLoader {
             final List<Object3DData> ret = new ArrayList<>();
             // log event
             Log.i("WavefrontLoader", "Processing geometries... ");
-            // notify listener
-//            callback.onProgress("Processing geometries...");
-            // proces all meshes
+
             for (MeshData meshData : meshes) {
-                // notify listener
-//                callback.onProgress("Processing normals...");
                 // fix missing or wrong normals
                 meshData.fixNormals();
-                // check we didn't brake normals
                 meshData.validate();
                 // create 3D object
                 Object3DData data3D = new Object3DData(meshData.getVertexBuffer());
@@ -142,14 +148,11 @@ public class WavefrontLoader {
                 data3D.setTextureBuffer(meshData.getTextureBuffer());
                 data3D.setElements(meshData.getElements());
                 data3D.setId(objPath);
-//                data3D.setUri(fname);
                 data3D.setDrawUsingArrays(false);
                 data3D.setDrawMode(GLES20.GL_TRIANGLES);
                 // add model to scene
                 callback.onLoad(data3D);
                 // notify listener
-//                callback.onProgress("Loading materials...");
-                // load colors and textures
                 String jpgPath = loadMaterials(meshData);
                 data3D.setTetxurePath(jpgPath);
             }
@@ -180,7 +183,10 @@ public class WavefrontLoader {
 
         try {
             // 执行 MTL
-            String mtlPath = ContentUtils.getMtlPath();
+//            String mtlPath = ContentUtils.getMtlPath();
+
+            String mtlPath = folder + "/" + meshData.getMaterialFile();
+
 //            String mtlPath =  get3DDownloadPath() + "/" +  meshData.mtlPath;
 
             final InputStream inputStream = new FileInputStream(mtlPath);
@@ -211,7 +217,7 @@ public class WavefrontLoader {
                             Log.i("WavefrontLoader", "Reading texture file... " + elementMaterial.getTextureFile());
 
                             //执行JPG
-                            jpgName = ContentUtils.getRenderImg(elementMaterial.getTextureFile());
+                            jpgName = folder + "/" + elementMaterial.getTextureFile();
                             try (InputStream stream = new FileInputStream(jpgName)) {
                                 // read data
                                 elementMaterial.setTextureData(IOUtils.read(stream));
@@ -221,14 +227,17 @@ public class WavefrontLoader {
                                 Log.e("WavefrontLoader", String.format("Error reading texture file: %s", ex.getMessage()));
                             }
 
+                            String overLayoutPath = folder+"/"+overLayoutname;
+
                             //执行 纹理叠加
-                            String overlayPath = ContentUtils.getOverlayPath();
-                            try (InputStream stream = new FileInputStream(overlayPath)) {
-                                // read data
-                                elementMaterial.setOverlayData(IOUtils.read(stream));
-                                Log.i("WavefrontLoader", "叠加纹理" + overlayPath);
-                            } catch (Exception ex) {
-                                Log.e("WavefrontLoader", String.format("Error reading texture file: %s", ex.getMessage()));
+                            if (isFileExists(overLayoutPath)){
+                                try (InputStream stream = new FileInputStream(overLayoutPath)) {
+                                    // read data
+                                    elementMaterial.setOverlayData(IOUtils.read(stream));
+                                    Log.i("WavefrontLoader", "叠加纹理" + overLayoutPath);
+                                } catch (Exception ex) {
+                                    Log.e("WavefrontLoader", String.format("Error reading texture file: %s", ex.getMessage()));
+                                }
                             }
                         }
                     }
@@ -240,6 +249,12 @@ public class WavefrontLoader {
         return jpgName;
     }
 
+    /**
+     * 加载Obj Path
+     * @param objPath
+     * @param is
+     * @return
+     */
     private List<MeshData> loadModel(String objPath, InputStream is) {
 
         // log event
@@ -282,7 +297,7 @@ public class WavefrontLoader {
                 while (((line = br.readLine()) != null)) {
                     lineNum++;
                     line = line.trim();
-                    if (line.length() == 0) continue;
+                    if (line.isEmpty()) continue;
                     if (line.startsWith("v ")) { // vertex 顶点
                         parseVector(vertexList, line.substring(2).trim());
                     } else if (line.startsWith("vn")) { // normal 法线
@@ -324,7 +339,7 @@ public class WavefrontLoader {
                             buildNewMesh = true;
                         }
                     } else if (line.charAt(0) == 'g') { // group name
-                        if (buildNewElement && indicesCurrent.size() > 0) {
+                        if (buildNewElement && !indicesCurrent.isEmpty()) {
 
                             // add current element
                             elementCurrent.indices(indicesCurrent);

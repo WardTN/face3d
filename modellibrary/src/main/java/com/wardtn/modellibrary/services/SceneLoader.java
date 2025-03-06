@@ -179,8 +179,14 @@ public class SceneLoader implements LoadListener, EventListener {
         lightBulb.setLocation(new float[]{0, 0, DEFAULT_CAMERA_POSITION});
     }
 
-
-    public boolean startLoad(String path, int isLightType, boolean isPreloadMode) {
+    /**
+     * 加载3D 模型文件
+     * @param path
+     * @param isLightType
+     * @param isPreloadMode
+     * @return
+     */
+    public boolean startLoad(String path, String overlayPath,int isLightType, boolean isPreloadMode) {
         camera.setChanged(true); // force first draw
 
 //        if (haveLoad3DData) {
@@ -203,7 +209,7 @@ public class SceneLoader implements LoadListener, EventListener {
 //            }
 //        } else {
             Log.e("CHEN", "开始 调用 AsyncTask 获取数据");
-            new WavefrontLoaderTask(parent, null, this, path,  isPreloadMode).execute();
+            new WavefrontLoaderTask(parent, null, this, path, overlayPath, isPreloadMode).execute();
 //        }
         return false;
     }
@@ -389,22 +395,13 @@ public class SceneLoader implements LoadListener, EventListener {
             makeToastText(allErrors.toString(), Toast.LENGTH_LONG);
         }
 
-        // notify user
-        final String elapsed = (SystemClock.uptimeMillis() - startTime) / 1000 + " secs";
-
-//        makeToastText("Load complete (" + elapsed + ")", Toast.LENGTH_LONG);
 
         // clear thread local
         ContentUtils.setThreadActivity(null);
 
-//         rescale all object so they fit in the screen
+        // rescale all object so they fit in the screen
         rescale(this.getObjects(), DEFAULT_MAX_MODEL_SIZE, new float[3]);
 
-        // fix coordinate system
-//        fixCoordinateSystem();
-        if (loadListener != null) {
-            loadListener.load3DSuc();
-        }
     }
 
     private void rescale(List<Object3DData> objs) {

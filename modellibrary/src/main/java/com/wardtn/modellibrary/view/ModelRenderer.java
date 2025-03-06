@@ -1,5 +1,7 @@
 package com.wardtn.modellibrary.view;
 
+import static com.wardtn.modellibrary.util.ModelFileUtilKt.isFileExists;
+
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -353,12 +355,11 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
             Integer overlayTextureId = -1;
 
             // 切换标注纹理
-            if (isChangeMarkTexture){
-                String overlayPath = ContentUtils.getOverlayPath2();
-                try (InputStream stream = new FileInputStream(overlayPath)) {
+            if (isChangeMarkTexture && isFileExists(changeOverlayPath)){
+                try (InputStream stream = new FileInputStream(changeOverlayPath)) {
                     // read data
                     objData.getMaterial().setOverlayData(IOUtils.read(stream));
-                    Log.i("ModelRenderer", "叠加纹理" + overlayPath);
+                    Log.i("ModelRenderer", "叠加纹理" + changeOverlayPath);
                     GLUtil.deleteTexture1();
                     overlayTextureId = GLUtil.loadTexture1(objData.getMaterial().getOverlayData());
                     textures.put(objData.getMaterial().getOverlayData(), overlayTextureId);
@@ -495,6 +496,7 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
     private boolean isChangeMarkTexture; // 是否更换标记纹理
 
     private String changeObj, changeJpg;
+    private String changeOverlayPath;
 
     private boolean isReset;
 
@@ -504,12 +506,13 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
         changeJpg = jpg;
     }
 
-    public void isRemoveMarkTexture(boolean mark) {
-        isRemoveMarkTexture = mark;
+    public void isRemoveMarkTexture(boolean is) {
+        isRemoveMarkTexture = is;
     }
 
-    public void setChangeMarkTexture(boolean mark){
-        isChangeMarkTexture = mark;
+    public void setChangeMarkTexture(String markPath){
+        isChangeMarkTexture = true;
+        changeOverlayPath = markPath;
     }
 
 

@@ -24,21 +24,18 @@ class Native3DLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr),
     EventListener, SceneLoader.LoadListener {
+
     private var modelSurfaceView: ModelSurfaceView? = null
     private var touchController: TouchController? = null
     private var cameraController: CameraController? = null
     private var frameLayout: FrameLayout
     private var sceneLoader: SceneLoader? = null
     private val backgroundColor = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
-    private var userID: String? = null
-    private var testID: String? = null
-
 
 
     private var isload3D = false
     fun set3DActivity(activity: Activity) {
-        sceneLoader =
-            SceneLoader(activity, null, 0)
+        sceneLoader = SceneLoader(activity, null, 0)
         sceneLoader?.setLoadListener(this)
         try {
             touchController = TouchController(activity)
@@ -61,28 +58,26 @@ class Native3DLayout @JvmOverloads constructor(
     }
 
 
-    fun initData(
-        activity: Activity?,
-        objPath: String,
-    ) {
+    fun initData(activity: Activity?, objPath:String, overlayName:String) {
         if (frameLayout.childCount > 0) {
             Log.e("CHEN", "当前已经存在 SurfaceView")
             return
         }
         //开始加载
-        sceneLoader?.startLoad(objPath,  1, false)
+        sceneLoader?.startLoad(objPath, overlayName,1, false)
         isload3D = true
 
         try {
             modelSurfaceView = ModelSurfaceView(
                 activity,
                 backgroundColor,
-                sceneLoader)
+                sceneLoader
+            )
             modelSurfaceView!!.addListener(this)
             frameLayout.addView(modelSurfaceView)
             modelSurfaceView!!.modelRenderer.addListener(cameraController)
         } catch (e: Exception) {
-           Log.e("CHEN", "初始化失败", e);
+            Log.e("CHEN", "初始化失败", e);
         }
 
 
@@ -92,8 +87,6 @@ class Native3DLayout @JvmOverloads constructor(
 //            changeTexture(mtlPath, imgPath)
 //        }
 
-        this.userID = userID
-        this.testID = testID
     }
 
 //    /**
@@ -115,7 +108,7 @@ class Native3DLayout @JvmOverloads constructor(
      */
     fun changeTexture(mtl: String, img: String) {
         if (!isload3D) {
-            Log.e("CHEN","当前还未展示3D 无法切换纹理");
+            Log.e("CHEN", "当前还未展示3D 无法切换纹理");
             return
         }
         modelSurfaceView!!.modelRenderer.setChangeTexture(mtl, img)
@@ -164,18 +157,5 @@ class Native3DLayout @JvmOverloads constructor(
     }
 
     override fun load3DSuc() {
-//        aliyunOssUrlBean?.let {
-//            if (Pre3DLoadManager.checkRGBAllGenerate(userID!!, testID!!)) {
-//                LoggerUtil.dq_log("当前 RGB 文件已经全部生成")
-//                return
-//            }
-//            LoggerUtil.dq_log("开始生成RGB 3D 文件")
-//            Utils.onRunRgbTransformerBitmap(
-//                it.whiteLightBean?.faceUrl,
-//                it.whiteLightBean?.leftUrl,
-//                it.whiteLightBean?.rightUrl,
-//                userID, testID
-//            )
-//        }
     }
 }

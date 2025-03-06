@@ -205,7 +205,7 @@ public class CompareSceneLoader implements LoadListener, EventListener {
 //            }
 //        } else {
             Log.e("CHEN", "开始 调用 AsyncTask 获取数据");
-            new WavefrontLoaderTask(parent, null, this, path, isPreloadMode).execute();
+            new WavefrontLoaderTask(parent, null, this, path, "",isPreloadMode).execute();
 //        }
         return false;
     }
@@ -367,9 +367,7 @@ public class CompareSceneLoader implements LoadListener, EventListener {
         final String elapsed = (SystemClock.uptimeMillis() - startTime) / 1000 + " secs";
 
 //        makeToastText("Load complete (" + elapsed + ")", Toast.LENGTH_LONG);
-        if (loadListener != null) {
-            loadListener.load3DSuc();
-        }
+
         // clear thread local
         ContentUtils.setThreadActivity(null);
 

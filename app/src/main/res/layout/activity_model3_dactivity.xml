@@ -28,7 +28,13 @@
 
         <Button
             android:id="@+id/btn_change_texure"
-            android:text="切换纹理"
+            android:text="切换标注纹理"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_change_bottom_texure"
+            android:text="切换底部纹理"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
