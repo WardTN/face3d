@@ -1,6 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
 }
 
 android {
@@ -37,7 +43,25 @@ android {
         }
     }
 
+    publishing {
+        singleVariant("release")
+    }
 }
+
+afterEvaluate {
+    publishing {
+        def versionName = "1.0.2"
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.wardtn.modellibrary' //groupId 随便取
+                artifactId = 'modellibrary'  //artifactId 随便取
+                version = versionName
+            }
+        }
+    }
+}
+
 
 dependencies {
 
