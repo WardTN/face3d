@@ -14,7 +14,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.solex.cameraopengl.R;
+import com.wardtn.facemodel.R;
+
 
 /**
  * 对比SeekBar

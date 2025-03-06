@@ -9,7 +9,7 @@ import android.util.Log;
 //import org.andresoviedo.android_3d_model_engine.model.Object3DData;
 //import org.andresoviedo.util.io.IOUtils;
 
-import com.solex.cameraopengl.R;
+import com.wardtn.facemodel.R;
 import com.wardtn.facemodel.model.AnimatedModel;
 import com.wardtn.facemodel.model.Object3DData;
 import com.wardtn.facemodel.util.io.IOUtils;

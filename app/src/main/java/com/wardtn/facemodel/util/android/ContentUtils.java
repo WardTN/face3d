@@ -18,8 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 
-import com.solex.cameraopengl.Constant;
-import com.solex.cameraopengl.R;
+import com.wardtn.facemodel.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

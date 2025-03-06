@@ -1,7 +1,8 @@
 package com.wardtn.facemodel.util.android;
 
-import static com.solex.cameraopengl.Constant.PATH_Folder_3D;
-import static com.solex.cameraopengl.Constant.SOLEX;
+
+import static com.wardtn.facemodel.Constant.PATH_Folder_3D;
+import static com.wardtn.facemodel.Constant.SOLEX;
 
 import android.app.AlertDialog;
 import android.content.Context;
