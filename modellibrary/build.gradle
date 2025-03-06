@@ -37,47 +37,6 @@ android {
             assets.srcDirs = ['src/main/assets']
         }
     }
-
-//    afterEvaluate {
-//        publishing {
-//            def versionName = "1.0.2" // 当前版本依赖库版本号，这个jitpack不会使用到，只是我们开发者自己查看
-//            publications {
-//                // Creates a Maven publication called "release".
-//                release(MavenPublication) {
-//                    // Applies the component for the release build variant.
-//                    from components.release // 表示发布 release（jitpack 都不会使用到）
-//
-//                    // You can then customize attributes of the publication as shown below.
-//                    groupId = 'com.wardtn.modelLibrary' // 这个是依赖库的组 id
-//                    artifactId = 'modelLibrary' // 依赖库的名称（jitpack 都不会使用到）
-//                    version = versionName
-//                }
-//            }
-//            repositories {
-//                // 下面这部分，不是很清楚加不加，但是最后加上
-//                maven {
-//                    // change URLs to point to your repos, e.g. http://my.org/repo
-//                    def baseUrl = buildDir.getParent()
-//                    def releasesRepoUrl = "$baseUrl/repos/releases"
-//                    def snapshotsRepoUrl = "$baseUrl/repos/snapshots"
-//                    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-//                }
-//            }
-//        }
-//    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.wardtn.modelLibrary' //groupId 随便取
-                artifactId = 'modelLibrary'  //artifactId 随便取
-                version = '1.0.2'
-            }
-        }
-    }
 }
 
 
@@ -89,3 +48,45 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
+
+
+android.libraryVariants.all {
+    def aptOutputDir = new File(buildDir, "generated/source/apt/${it.unitTestVariant.dirName}")
+    it.unitTestVariant.addJavaSourceFoldersToModel(aptOutputDir)
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.jniLibs.srcDirs
+    archiveClassifier = "sources"
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.sourceFiles
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.release
+                version = "1.0.2"
+                artifactId = 'modelLibrary'
+                groupId = 'com.wardtn.modelLibrary'
+            }
+        }
+        repositories {
+            maven {
+                def releasesUrl = "releaseurl_ifavailable"
+                def snapshotsUrl = "snapshoturl_ifavailable"
+                url = version.endsWith('SNAPSHOT') ? snapshotsUrl : releasesUrl
+//                    credentials {
+//                        username = your_username
+//                        password = your_password
+//                    }
+            }
+        }
+    }
+}
+
