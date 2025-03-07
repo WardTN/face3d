@@ -43,7 +43,7 @@
 
 
     <com.wardtn.modellibrary.Native3DLayout
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="190dp"
         android:id="@+id/native3dLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

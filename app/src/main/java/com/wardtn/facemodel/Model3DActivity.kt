@@ -18,6 +18,7 @@ class Model3DActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private val PERMISSION_REQUEST_CODE = 1
+    private var  isRemove = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +37,16 @@ class Model3DActivity : AppCompatActivity() {
             PATH_Folder_3D =
                 getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.absolutePath + "/3DMark"
             var obj = "$PATH_Folder_3D/$SOLEX.obj"
+            var overLayPath = "$PATH_Folder_3D/output_mask.png"
 
-            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, "output_mask.png")
+            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, overLayPath)
 
         }
 
         findViewById<Button>(R.id.btn_remove_mask).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()
-                ?.isRemoveMarkTexture(true)
+                ?.isRemoveMarkTexture(isRemove)
+            isRemove = !isRemove
         }
 
         findViewById<Button>(R.id.btn_change_texure).setOnClickListener {

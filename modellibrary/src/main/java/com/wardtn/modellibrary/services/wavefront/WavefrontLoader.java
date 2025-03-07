@@ -67,7 +67,7 @@ public class WavefrontLoader {
     private final LoadListener callback;
 
     private String folder = "";
-    private String overLayoutname = "";
+    private String overLayoutPath = "";
 
     public WavefrontLoader(int triangulationMode, LoadListener callback) {
         this.triangulationMode = triangulationMode;
@@ -107,13 +107,13 @@ public class WavefrontLoader {
      * @param objPath 路径
      * @return
      */
-    public synchronized List<Object3DData> load(String objPath,String overLayoutname) {
+    public synchronized List<Object3DData> load(String objPath,String overLayoutPath) {
         try {
 //            InputStream is = r.getAssets().open(fname);
 
             // get Folder
             folder = objPath.substring(0, objPath.lastIndexOf("/"));
-            this.overLayoutname = overLayoutname;
+            this.overLayoutPath = overLayoutPath;
 
             //更换成路径传输
             InputStream is = new FileInputStream(objPath);
@@ -226,8 +226,6 @@ public class WavefrontLoader {
                             } catch (Exception ex) {
                                 Log.e("WavefrontLoader", String.format("Error reading texture file: %s", ex.getMessage()));
                             }
-
-                            String overLayoutPath = folder+"/"+overLayoutname;
 
                             //执行 纹理叠加
                             if (isFileExists(overLayoutPath)){

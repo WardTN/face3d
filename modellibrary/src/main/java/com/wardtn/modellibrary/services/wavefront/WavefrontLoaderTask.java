@@ -20,15 +20,15 @@ public class WavefrontLoaderTask extends LoaderTask {
     private Activity activity;
     private boolean isChangeTexture;
     private String objPath;
-    private String overLayoutname;
+    private String overLayoutPath;
 
-    public WavefrontLoaderTask(final Activity parent, final URI uri, final LoadListener callback, String objPath, String overLayoutname,Boolean isPreload) {
+    public WavefrontLoaderTask(final Activity parent, final URI uri, final LoadListener callback, String objPath, String overLayoutPath,Boolean isPreload) {
         super(parent, uri, callback);
         this.activity = parent;
         isChangeTexture = false;
         this.objPath = objPath;
         this.isPreload = isPreload;
-        this.overLayoutname = overLayoutname;
+        this.overLayoutPath = overLayoutPath;
     }
 
 
@@ -38,7 +38,7 @@ public class WavefrontLoaderTask extends LoaderTask {
         if (!isPreload) {
             super.publishProgress("加载3D模型中...");
         }
-        final List<Object3DData> load = wfl.load(objPath,overLayoutname);
+        final List<Object3DData> load = wfl.load(objPath,overLayoutPath);
         return load;
     }
 

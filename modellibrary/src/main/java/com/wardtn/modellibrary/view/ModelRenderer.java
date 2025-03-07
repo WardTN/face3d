@@ -390,6 +390,12 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
 //                            textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
                         }
 
+//                        if (isRemoveMarkTexture && overlayTextureId != null){
+//                            overlayTextureId = -1;
+//                        }
+//                        element.getMaterial().setOverlayTextureId(overlayTextureId);
+
+
 //                        if (isChangeMarkTexture){
 ////                            GLUtil.deleteTexture1();
 //                            overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
@@ -453,8 +459,10 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
             if (textureId == null) {
                 textureId = -1;
             }
+
             Log.i("ModelRenderer", "textureID: " + textureId + "overlay" + overlayTextureId);
-            drawerObject.draw(objData, projectionMatrix, viewMatrix, textureId, lightPosInWorldSpace, colorMask, cameraPosInWorldSpace);
+
+            drawerObject.draw(objData, projectionMatrix, viewMatrix, textureId,overlayTextureId == -1, lightPosInWorldSpace, colorMask, cameraPosInWorldSpace);
         } catch (Exception ex) {
             if (!infoLogged.containsKey(ex.getMessage())) {
                 Log.e("ModelRenderer", "There was a problem rendering the object '" + objData.getId() + "':" + ex.getMessage(), ex);

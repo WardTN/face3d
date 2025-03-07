@@ -481,7 +481,7 @@ public class CompareRender implements GLSurfaceView.Renderer {
                 basicDrawer.draw(objData, projectionMatrix, viewMatrix, GLES20.GL_POINTS, lightPosInWorldSpace, cameraPosInWorldSpace);
             } else {
                 drawerObject.draw(objData, projectionMatrix, viewMatrix,
-                        textureId, lightPosInWorldSpace, colorMask, cameraPosInWorldSpace);
+                        textureId,false, lightPosInWorldSpace, colorMask, cameraPosInWorldSpace);
                 objData.render(drawer, lightPosInWorldSpace, colorMask);
             }
         } catch (Exception ex) {

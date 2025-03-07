@@ -59,6 +59,8 @@ class GLES20Renderer implements Renderer {
     // does the device support drawElements for GL_UNSIGNED_INT or not?
     private boolean drawUsingUnsignedInt = true;
 
+    private boolean isOverLay = false;
+
     /**
      * Textures cache
      */
@@ -111,17 +113,18 @@ class GLES20Renderer implements Renderer {
 
     @Override
     public void draw(Object3DData obj, float[] pMatrix, float[] vMatrix, int textureId, float[] lightPosInWorldSpace, float[] cameraPos) {
-        this.draw(obj, pMatrix, vMatrix, obj.getDrawMode(), obj.getDrawSize(), textureId, lightPosInWorldSpace, null, cameraPos);
+        this.draw(obj, pMatrix, vMatrix, obj.getDrawMode(), obj.getDrawSize(), textureId,false, lightPosInWorldSpace, null, cameraPos);
     }
 
     @Override
-    public void draw(Object3DData obj, float[] pMatrix, float[] vMatrix, int textureId, float[] lightPosInWorldSpace, float[] colorMask, float[] cameraPos) {
-        this.draw(obj, pMatrix, vMatrix, obj.getDrawMode(), obj.getDrawSize(), textureId, lightPosInWorldSpace, colorMask, cameraPos);
+    public void draw(Object3DData obj, float[] pMatrix, float[] vMatrix, int textureId,boolean isOverlay, float[] lightPosInWorldSpace, float[] colorMask, float[] cameraPos) {
+        this.draw(obj, pMatrix, vMatrix, obj.getDrawMode(), obj.getDrawSize(), textureId, isOverlay,lightPosInWorldSpace, colorMask, cameraPos);
     }
 
     @Override
-    public void draw(Object3DData obj, float[] pMatrix, float[] vMatrix, int drawMode, int drawSize, int textureId, float[] lightPosInWorldSpace, float[] colorMask, float[] cameraPos) {
+    public void draw(Object3DData obj, float[] pMatrix, float[] vMatrix, int drawMode, int drawSize, int textureId,boolean isOverlay, float[] lightPosInWorldSpace, float[] colorMask, float[] cameraPos) {
 
+        this.isOverLay = isOverlay;
         // log event once
         if (id != flags.get(obj.getId())) {
             Log.d("GLES20Renderer", "Rendering with shader: " + id + "vert... obj: " + obj);
@@ -164,15 +167,8 @@ class GLES20Renderer implements Renderer {
         // pass in texture UV buffer
         int mTextureHandle = -1;
         if (textureId != -1 && supportsTextures()) {
-//            setTexture(textureId);
-//            setOverLayTexture(2);
             mTextureHandle = setVBO("a_TexCoordinate", obj.getTextureBuffer(), TEXTURE_COORDS_PER_VERTEX);
         }
-
-
-//        if (textureId != -1 && supportsTextures()){
-//            setOverLayTexture(2);
-//        }
 
         // pass in the SkyBox texture
         if (textureId != -1 && supportsTextureCube()) {
@@ -449,20 +445,6 @@ class GLES20Renderer implements Renderer {
 
     private void drawTrianglesUsingIndex(Object3DData obj, int drawMode, int drawSize, Buffer drawOrderBuffer, int drawBufferType) {
         if (drawSize <= 0) {
-            // String mode = drawMode == GLES20.GL_POINTS ? "Points" : drawMode == GLES20.GL_LINES? "Lines": "Triangles?";
-            // Log.v(obj.getId(),"Drawing all elements with mode '"+drawMode+"'...");
-
-
-            /*for (int i = 0; i<obj.getOldElements().size(); i++) {
-                drawOrderBuffer = obj.getOldElements().get(i);
-                drawOrderBuffer.position(0);
-                GLES20.glDrawElements(drawMode, drawOrderBuffer.capacity(), drawBufferType,
-                        drawOrderBuffer);
-                boolean error = GLUtil.checkGlError("glDrawElements");
-                if (drawUsingUnsignedInt && error) {
-                    drawUsingUnsignedInt = false;
-                }
-            }*/
 
             if (id != flags.get(obj.getElements())) {
                 Log.i("GLES20Renderer", "Rendering elements... obj: " + obj.getId() + ", total:" + obj.getElements().size());
@@ -489,7 +471,7 @@ class GLES20Renderer implements Renderer {
                         setUniform4(element.getMaterial().getColor() != null ? element.getMaterial().getColor() : obj.getColor() != null ? obj.getColor() : DEFAULT_COLOR, "vColor");
                     }
 
-                    if (element.getMaterial().getOverlayTextureId() != -1 && supportsTextures()) {
+                    if (element.getMaterial().getOverlayTextureId() != -1 && supportsTextures() && isOverLay) {
                         changeMarkMode(true);
                         setOverlayTexture(element.getMaterial().getOverlayTextureId());
                     } else {
