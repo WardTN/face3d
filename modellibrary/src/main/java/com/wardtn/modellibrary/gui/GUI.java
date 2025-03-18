@@ -85,7 +85,7 @@ public class GUI extends Widget implements EventListener {
         Renderer drawer = rendererFactory.getDrawer(widget, false, false, false, false, true);
 
         GLES20.glLineWidth(2.0f);
-        drawer.draw(widget, projectionMatrix, viewMatrix, -1,false, lightPosInWorldSpace, colorMask, cameraPosition);
+        drawer.draw(widget, projectionMatrix, viewMatrix, -1, lightPosInWorldSpace, colorMask, cameraPosition);
     }
 
     @Override
