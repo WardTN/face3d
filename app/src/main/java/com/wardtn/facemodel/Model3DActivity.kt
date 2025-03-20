@@ -1,6 +1,7 @@
 package com.wardtn.facemodel
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,7 +19,6 @@ class Model3DActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private val PERMISSION_REQUEST_CODE = 1
-    private var isRemove = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_model3_dactivity)
@@ -62,6 +62,11 @@ class Model3DActivity : AppCompatActivity() {
         findViewById<Button>(R.id.reset).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()?.setReset()
         }
+
+        findViewById<Button>(R.id.compare).setOnClickListener {
+            startActivity(Intent(this@Model3DActivity,CompareActivity::class.java))
+        }
+
     }
 
     protected fun hasPermissionsGranted(permissions: Array<String>): Boolean {

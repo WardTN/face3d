@@ -45,30 +45,6 @@ class NativeCompare3DLayout @JvmOverloads constructor(
         seekBar = findViewById(R.id.comparebar)
         seekBar?.visibility = VISIBLE
         seekBar?.listener = this
-//        findViewById<Button>(R.id.changeTexture).setOnClickListener {
-////            var objPath =
-////                "/storage/emulated/0/Android/data/com.solex.skinhd/files/BallSkindev/Assets/www/file/272/1007655732792922112/solexCopy.obj"
-//            var customId = "272"
-//            var testId = "1007655732792922112"
-//
-//
-////            var objPath2 =
-////                "/storage/emulated/0/Android/data/com.solex.skinhd/files/BallSkindev/Assets/www/file/266/1008683087451787265/solexCopy.obj"
-//            var customId2 = "266"
-//            var testId2 = "1008683087451787265"
-//
-//
-//            var mtlPath = get3DDownloadPath(customId, testId) + "/${Constant.SOLEX}.mtl"
-//            var imgPath =
-//                get3DDownloadPath(customId, testId) + "/" + getRenderImg(Constant.BLUE_LIGHT)
-//
-//            var mtlPath2 = get3DDownloadPath(customId2, testId2) + "/${Constant.SOLEX}.mtl"
-//            var imgPath2 =
-//                get3DDownloadPath(customId2, testId2) + "/" + getRenderImg(Constant.CROSS_LIGHT)
-//
-//            modelSurfaceView!!.compareRender.setChangeTexture(mtlPath, imgPath, mtlPath2, imgPath2)
-//            modelSurfaceView!!.compareRender.setReset()
-//        }
     }
 
 

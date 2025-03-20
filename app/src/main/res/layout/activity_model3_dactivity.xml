@@ -50,7 +50,14 @@
         <Button
             android:id="@+id/reset"
             android:text="重置"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/compare"
+            android:text="对比"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
