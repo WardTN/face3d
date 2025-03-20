@@ -316,21 +316,12 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
 
             objData.setChanged(false);
 
-            //切换纹理
-//            if (isChangeTexture) {
-//                // 删除纹理
-//                GLUtil.deleteTexture();
-//                List<Element> elements = loadMaterials(objData.getMeshData(), changeObj, changeJpg);
-//                objData.setTetxurePath(changeJpg);
-//                objData.setElements(elements);
-//                isChangeTexture = false;
-//            }
-//
-//            //还原3D
-//            if (isReset) {
-//                scene.reset3D();
-//                isReset = false;
-//            }
+
+            //还原3D
+            if (isReset) {
+                scene.reset3D();
+                isReset = false;
+            }
 
 
             // load textures
@@ -387,6 +378,20 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
                     }
                 }
 
+                if (isChangeBotttomTexure && isFileExists(bottomTexturePath)) {
+                    try (InputStream stream = new FileInputStream(bottomTexturePath)) {
+                        objData.getMaterial().setTextureData(IOUtils.read(stream));
+                        GLUtil.deleteTexture();
+                        textureId = GLUtil.loadTexture(objData.getMaterial().getTextureData());
+                        element.getMaterial().setTextureId(textureId);
+                        textures.put(element.getMaterial().getTextureData(), textureId);
+                        objData.setTextureData(element.getMaterial().getTextureData());
+                        isChangeBotttomTexure = false;
+                    } catch (Exception ex) {
+                        Log.e("ModelRenderer", String.format("Error reading texture file: %s", ex.getMessage()));
+                    }
+                }
+
                 // 纹理存在后不执行
                 if (textureId != null) continue;
 
@@ -405,13 +410,16 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
                     continue;
                 }
                 Log.i("ModelRenderer", "Loaded top overlayTextureId texture OK. id: " + overlayTextureId);
-                // bind texture
-                overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
-                if (overlayTextureId == null) {
+                if (element.getMaterial().getOverlayData() == null){
                     isShowMarkTexture = false;
-                } else {
+                    continue;
+                }else{
                     isShowMarkTexture = true;
                 }
+
+                // bind texture
+                overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
+
                 element.getMaterial().setOverlayTextureId(overlayTextureId);
                 // cache texture
                 textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
@@ -462,8 +470,12 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
     private boolean isShowMarkTexture = false; //是否展现Mark纹理
     private boolean isChangeMarkTexture; //是否更换标记纹理
 
+    private boolean isChangeBotttomTexure; //切换底图纹理
+
     private String changeObj, changeJpg;
-    private String changeOverlayPath;
+    private String changeOverlayPath = "";
+
+    private String bottomTexturePath = "";
 
     private boolean isReset;
 
@@ -480,6 +492,12 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
     public void setChangeMarkTexture(String markPath) {
         isChangeMarkTexture = true;
         changeOverlayPath = markPath;
+    }
+
+
+    public void setChangeBotttomTexture(String botttomTexture) {
+        isChangeBotttomTexure = true;
+        bottomTexturePath = botttomTexture;
     }
 
 

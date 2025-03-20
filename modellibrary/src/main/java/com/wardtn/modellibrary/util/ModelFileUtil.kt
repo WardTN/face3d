@@ -1,5 +1,6 @@
 package com.wardtn.modellibrary.util
 
+import android.text.TextUtils
 import java.io.File
 
 /**
@@ -9,6 +10,7 @@ import java.io.File
  * @return 如果文件存在，则返回 true；否则返回 false。
  */
 fun isFileExists(filePath: String): Boolean {
+    if (TextUtils.isEmpty(filePath)) return false
     val file = File(filePath)
     return file.exists()
 }

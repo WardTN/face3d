@@ -396,6 +396,10 @@ public class ContentUtils {
         return FileUtils.get3DDownloadPath() + "/output_mask2.png";
     }
 
+    public static String getBottomtexurePath() {
+        return FileUtils.get3DDownloadPath() + "/face_texture.jpg";
+    }
+
 
 
     public static String getRenderImg(String renderImg) {
