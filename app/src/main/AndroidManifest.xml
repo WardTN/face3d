@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.wardtn.facemodel">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +13,6 @@
         android:theme="@style/Theme.MyApplication">
         <activity
             android:name=".CompareActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Model3DActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

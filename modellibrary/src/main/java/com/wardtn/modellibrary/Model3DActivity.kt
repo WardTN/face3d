@@ -1,4 +1,4 @@
-package com.wardtn.facemodel
+package com.wardtn.modellibrary
 
 import android.Manifest
 import android.content.Intent
@@ -61,10 +61,6 @@ class Model3DActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.reset).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()?.setReset()
-        }
-
-        findViewById<Button>(R.id.compare).setOnClickListener {
-            startActivity(Intent(this@Model3DActivity,CompareActivity::class.java))
         }
 
     }
