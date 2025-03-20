@@ -1,7 +1,5 @@
 package com.wardtn.modellibrary.view;
 
-import static com.wardtn.modellibrary.util.ModelFileUtilKt.isFileExists;
-
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -27,7 +25,6 @@ import com.wardtn.modellibrary.util.event.EventListener;
 import com.wardtn.modellibrary.util.io.IOUtils;
 import com.wardtn.modellibrary.util.AndroidUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -312,28 +309,12 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
         Object3DData objData = null;
         try {
             objData = objects.get(i);
-            if (!objData.isVisible()) {
-                return;
-            }
-
-            if (!infoLogged.containsKey(objData.getId())) {
-                Log.i("ModelRenderer", "Drawing model: " + objData.getId() + ", " + objData.getClass().getSimpleName());
-                infoLogged.put(objData.getId(), true);
-            }
-
 
             Renderer drawerObject = drawer.getDrawer(objData, false, drawTextures, drawLighting, doAnimation, drawColors);
-            if (drawerObject == null) {
-                if (!infoLogged.containsKey(objData.getId() + "drawer")) {
-                    Log.e("ModelRenderer", "No drawer for " + objData.getId());
-                    infoLogged.put(objData.getId() + "drawer", true);
-                }
-                return;
-            }
 
             objData.setChanged(false);
 
-//            //切换纹理
+            //切换纹理
 //            if (isChangeTexture) {
 //                // 删除纹理
 //                GLUtil.deleteTexture();
@@ -355,105 +336,85 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
             Integer overlayTextureId = -1;
 
             // 切换标注纹理
-            if (isChangeMarkTexture && isFileExists(changeOverlayPath)){
-                try (InputStream stream = new FileInputStream(changeOverlayPath)) {
-                    // read data
-                    objData.getMaterial().setOverlayData(IOUtils.read(stream));
-                    Log.i("ModelRenderer", "叠加纹理" + changeOverlayPath);
-                    GLUtil.deleteTexture1();
-                    overlayTextureId = GLUtil.loadTexture1(objData.getMaterial().getOverlayData());
-                    textures.put(objData.getMaterial().getOverlayData(), overlayTextureId);
-                    isChangeMarkTexture = false;
-                } catch (Exception ex) {
-                    Log.e("ModelRenderer", String.format("Error reading texture file: %s", ex.getMessage()));
+//            if (isChangeMarkTexture && isFileExists(changeOverlayPath)) {
+//                try (InputStream stream = new FileInputStream(changeOverlayPath)) {
+//                    // read data
+//                    objData.getMaterial().setOverlayData(IOUtils.read(stream));
+//                    Log.i("ModelRenderer", "叠加纹理" + changeOverlayPath);
+//                    GLUtil.deleteTexture1();
+//                    overlayTextureId = GLUtil.loadTexture1(objData.getMaterial().getOverlayData());
+//                    textures.put(objData.getMaterial().getOverlayData(), overlayTextureId);
+//                    isChangeMarkTexture = false;
+//                } catch (Exception ex) {
+//                    Log.e("ModelRenderer", String.format("Error reading texture file: %s", ex.getMessage()));
+//                }
+//            }
+
+            // 首次不添加标注,这个时候要创建一个标注纹理
+            // 首次添加标注,则算切换纹理
+            // 显示和替换标注
+
+            if (objData.getElements() == null) return;
+
+            for (int e = 0; e < objData.getElements().size(); e++) {
+                Element element = objData.getElements().get(e);
+                // check required info
+                if (element.getMaterial() == null || element.getMaterial().getTextureData() == null)
+                    continue;
+
+                // 加载基础纹理
+                textureId = textures.get(element.getMaterial().getTextureData());
+
+                int markTextureId = -1;
+                if (textures.get(element.getMaterial().getOverlayData()) != null) {
+                    markTextureId = textures.get(element.getMaterial().getOverlayData());
                 }
-            }
 
 
-
-            if (drawTextures) {
-                if (objData.getElements() != null) {
-                    for (int e = 0; e < objData.getElements().size(); e++) {
-                        Element element = objData.getElements().get(e);
-                        // check required info
-                        if (element.getMaterial() == null || element.getMaterial().getTextureData() == null)
-                            continue;
-
-                        // 加载基础纹理
-                        textureId = textures.get(element.getMaterial().getTextureData());
-                        overlayTextureId = textures.get(element.getMaterial().getOverlayData());
-
-                        if (isRemoveMarkTexture && overlayTextureId != null){
-//                            GLUtil.deleteTexture1();
-                            overlayTextureId = -1;
-                            element.getMaterial().setOverlayTextureId(overlayTextureId);
-//                            textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
-                        }
-
-//                        if (isChangeMarkTexture){
-////                            GLUtil.deleteTexture1();
-//                            overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
-//                            element.getMaterial().setOverlayTextureId(overlayTextureId);
-//                            textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
-//                            isChangeMarkTexture = false;
-//                        }
-
-
-                        if (textureId != null) continue;
-                        // bind texture
-                        Log.i("ModelRenderer", "Loaded top textureId texture OK. id: " + textureId);
-                        textureId = GLUtil.loadTexture(element.getMaterial().getTextureData());
-                        element.getMaterial().setTextureId(textureId);
-                        // cache texture
-                        textures.put(element.getMaterial().getTextureData(), textureId);
-                        objData.setTextureData(element.getMaterial().getTextureData());
-
-                        if (!isRemoveMarkTexture) {
-                            // 加载叠加纹理
-                            overlayTextureId = textures.get(element.getMaterial().getOverlayData());
-                            if (overlayTextureId != null) continue;
-                            Log.i("ModelRenderer", "Loaded top overlayTextureId texture OK. id: " + overlayTextureId);
-                            // bind texture
-                            overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
-                            element.getMaterial().setOverlayTextureId(overlayTextureId);
-                            // cache texture
-                            textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
-                            objData.setOverLayTextureData(element.getMaterial().getOverlayData());
-                        }
+                // 用户选择点击显示标注 或者隐藏标注
+                if (overlayTextureId != null) {
+                    // 用户点击取消标注 传回去-1
+                    if (isShowMarkTexture) {
+                        element.getMaterial().setOverlayTextureId(markTextureId);
+                    } else {
+                        element.getMaterial().setOverlayTextureId(-1);
                     }
+                }
+
+                // 纹理存在后不执行
+                if (textureId != null) continue;
+
+                // 加载基础纹理
+                // bind texture
+                Log.i("ModelRenderer", "Loaded top textureId texture OK. id: " + textureId);
+                textureId = GLUtil.loadTexture(element.getMaterial().getTextureData());
+                element.getMaterial().setTextureId(textureId);
+                // cache texture
+                textures.put(element.getMaterial().getTextureData(), textureId);
+                objData.setTextureData(element.getMaterial().getTextureData());
+
+                // 如果首次存在标注纹理 则一起显示
+                overlayTextureId = textures.get(element.getMaterial().getOverlayData());
+                if (overlayTextureId != null) {
+                    continue;
+                }
+                Log.i("ModelRenderer", "Loaded top overlayTextureId texture OK. id: " + overlayTextureId);
+                // bind texture
+                overlayTextureId = GLUtil.loadTexture1(element.getMaterial().getOverlayData());
+                if (overlayTextureId == null) {
+                    isShowMarkTexture = false;
                 } else {
-                    // 加载基础纹理
-                    textureId = textures.get(objData.getTextureData());
-                    if (textureId == null && objData.getTextureData() != null) {
-                        Log.i("ModelRenderer", "Loading bottom texture for obj: '" + objData.getId() + "'... bytes: " + objData.getTextureData().length);
-                        ByteArrayInputStream textureIs = new ByteArrayInputStream(objData.getTextureData());
-                        textureId = GLUtil.loadTexture(textureIs);
-                        textureIs.close();
-                        textures.put(objData.getTextureData(), textureId);
-                        objData.getMaterial().setTextureId(textureId);
-
-                        Log.i("ModelRenderer", "Loaded texture OK. id: " + textureId);
-                    }
-
-                    if (!isRemoveMarkTexture) {
-                        // 加载叠加纹理
-                        overlayTextureId = textures.get(objData.getOverlayTextureData());
-                        if (overlayTextureId == null && objData.getOverlayTextureData() != null) {
-                            ByteArrayInputStream textureIs = new ByteArrayInputStream(objData.getOverlayTextureData());
-                            overlayTextureId = GLUtil.loadTexture1(textureIs);
-                            textureIs.close();
-                            textures.put(objData.getOverlayTextureData(), overlayTextureId);
-                            objData.getMaterial().setOverlayTextureId(overlayTextureId);
-                            Log.i("ModelRenderer", "Loaded bottom texture OK. id: " + textureId);
-                        }
-                    }
+                    isShowMarkTexture = true;
                 }
-            }
+                element.getMaterial().setOverlayTextureId(overlayTextureId);
+                // cache texture
+                textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
+                objData.setOverLayTextureData(element.getMaterial().getOverlayData());
 
+            }
             if (textureId == null) {
                 textureId = -1;
             }
-            Log.i("ModelRenderer", "textureID: " + textureId + "overlay" + overlayTextureId);
             drawerObject.draw(objData, projectionMatrix, viewMatrix, textureId, lightPosInWorldSpace, colorMask, cameraPosInWorldSpace);
         } catch (Exception ex) {
             if (!infoLogged.containsKey(ex.getMessage())) {
@@ -492,8 +453,8 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
      */
 
     private boolean isChangeTexture;
-    private boolean isRemoveMarkTexture = false; // 是否移除标记纹理
-    private boolean isChangeMarkTexture; // 是否更换标记纹理
+    private boolean isShowMarkTexture = false; //是否展现Mark纹理
+    private boolean isChangeMarkTexture; //是否更换标记纹理
 
     private String changeObj, changeJpg;
     private String changeOverlayPath;
@@ -506,11 +467,11 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
         changeJpg = jpg;
     }
 
-    public void isRemoveMarkTexture(boolean is) {
-        isRemoveMarkTexture = is;
+    public void isShowMarkTexure() {
+        isShowMarkTexture = !isShowMarkTexture;
     }
 
-    public void setChangeMarkTexture(String markPath){
+    public void setChangeMarkTexture(String markPath) {
         isChangeMarkTexture = true;
         changeOverlayPath = markPath;
     }

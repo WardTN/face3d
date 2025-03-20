@@ -8,42 +8,46 @@
 
     <LinearLayout
         app:layout_constraintTop_toTopOf="parent"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/btn_show_3d"
             android:text="展现3D"
+            android:layout_gravity="center"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btn_remove_mask"
             android:text="清除遮罩"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/btn_show_3d"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btn_change_texure"
             android:text="切换标注纹理"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/btn_change_bottom_texure"
-            android:text="切换底部纹理"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
+            android:text="切换下层纹理"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
 
 
     <com.wardtn.modellibrary.Native3DLayout
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="90dp"
         android:id="@+id/native3dLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

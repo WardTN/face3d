@@ -36,7 +36,6 @@ import android.opengl.GLES20;
 
 import androidx.annotation.Nullable;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -67,7 +66,7 @@ public class WavefrontLoader {
     private final LoadListener callback;
 
     private String folder = "";
-    private String overLayoutname = "";
+    private String overLayoutPath = "";
 
     public WavefrontLoader(int triangulationMode, LoadListener callback) {
         this.triangulationMode = triangulationMode;
@@ -113,7 +112,7 @@ public class WavefrontLoader {
 
             // get Folder
             folder = objPath.substring(0, objPath.lastIndexOf("/"));
-            this.overLayoutname = overLayoutname;
+            this.overLayoutPath = overLayoutname;
 
             //更换成路径传输
             InputStream is = new FileInputStream(objPath);
@@ -227,7 +226,6 @@ public class WavefrontLoader {
                                 Log.e("WavefrontLoader", String.format("Error reading texture file: %s", ex.getMessage()));
                             }
 
-                            String overLayoutPath = folder+"/"+overLayoutname;
 
                             //执行 纹理叠加
                             if (isFileExists(overLayoutPath)){
