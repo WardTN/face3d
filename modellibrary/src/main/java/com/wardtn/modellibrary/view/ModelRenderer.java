@@ -1,5 +1,7 @@
 package com.wardtn.modellibrary.view;
 
+import static com.wardtn.modellibrary.util.ModelFileUtilKt.isFileExists;
+
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -335,20 +337,6 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
             Integer textureId = null;
             Integer overlayTextureId = -1;
 
-            // 切换标注纹理
-//            if (isChangeMarkTexture && isFileExists(changeOverlayPath)) {
-//                try (InputStream stream = new FileInputStream(changeOverlayPath)) {
-//                    // read data
-//                    objData.getMaterial().setOverlayData(IOUtils.read(stream));
-//                    Log.i("ModelRenderer", "叠加纹理" + changeOverlayPath);
-//                    GLUtil.deleteTexture1();
-//                    overlayTextureId = GLUtil.loadTexture1(objData.getMaterial().getOverlayData());
-//                    textures.put(objData.getMaterial().getOverlayData(), overlayTextureId);
-//                    isChangeMarkTexture = false;
-//                } catch (Exception ex) {
-//                    Log.e("ModelRenderer", String.format("Error reading texture file: %s", ex.getMessage()));
-//                }
-//            }
 
             // 首次不添加标注,这个时候要创建一个标注纹理
             // 首次添加标注,则算切换纹理
@@ -378,6 +366,24 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
                         element.getMaterial().setOverlayTextureId(markTextureId);
                     } else {
                         element.getMaterial().setOverlayTextureId(-1);
+                    }
+                }
+
+                // 切换标注纹理
+                if (isChangeMarkTexture && isFileExists(changeOverlayPath)) {
+                    try (InputStream stream = new FileInputStream(changeOverlayPath)) {
+                        // read data
+                        objData.getMaterial().setOverlayData(IOUtils.read(stream));
+                        if (overlayTextureId != -1) {
+                            GLUtil.deleteTexture1();
+                        }
+                        overlayTextureId = GLUtil.loadTexture1(objData.getMaterial().getOverlayData());
+                        // cache texture
+                        textures.put(element.getMaterial().getOverlayData(), overlayTextureId);
+                        isChangeMarkTexture = false;
+                        isShowMarkTexture = true;
+                    } catch (Exception ex) {
+                        Log.e("ModelRenderer", String.format("Error reading texture file: %s", ex.getMessage()));
                     }
                 }
 

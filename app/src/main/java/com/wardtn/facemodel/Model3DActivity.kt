@@ -38,16 +38,17 @@ class Model3DActivity : AppCompatActivity() {
 
             var overLayPath = "$PATH_Folder_3D/output_mask.png"
 
-            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, overLayPath)
+            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, "")
+//            findViewById<Native3DLayout>(R.id.native3dLayout).initData(this, obj, overLayPath)
         }
 
-        // 更换上层纹理
+        // 标注变化
         findViewById<Button>(R.id.btn_remove_mask).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()
                 ?.isShowMarkTexure()
         }
 
-        // 更换底层纹理
+        // 切换标注
         findViewById<Button>(R.id.btn_change_texure).setOnClickListener {
             findViewById<Native3DLayout>(R.id.native3dLayout).getRenderer()
                 ?.setChangeMarkTexture(ContentUtils.getOverlayPath2())
